@@ -23,10 +23,7 @@ val client = HttpClient(CIO) {
     }
 }
 
-suspend fun fetchData(token: String): JourneyResponse {
-    val token = getToken()
-    val fromGid = 9021014001760000
-    val toGid = 9021014007340000
+suspend fun fetchData(token: String, fromGid: Long, toGid: Long): JourneyResponse {
     val url = "https://ext-api.vasttrafik.se/pr/v4/journeys?originGid=$fromGid&destinationGid=$toGid"
 
     val response: JourneyResponse = client.get(url){

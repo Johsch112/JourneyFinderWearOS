@@ -17,23 +17,34 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
 
 
-
 val myBlue = Color(rgb(90,95,187)) // A blue color with full opacity
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             WearApp()
-
         }
-
     }
 }
 
 @Composable
 fun WearApp() {
     MaterialTheme {
-        FetchButton()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(myBlue)
+        ) {
+            // Centered HOME button
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+                FetchButtonToHOME()
+            }
+
+            // Bottom-centered SCHOOL button
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+                FetchButtonToSCHOOL()
+            }
+        }
     }
 }
+
