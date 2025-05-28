@@ -1,6 +1,17 @@
 package com.example.westtraffic.presentation
 import android.app.Application
 import android.util.Log
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.Text
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -15,6 +26,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 
 val client = HttpClient(CIO) {
@@ -80,10 +93,6 @@ data class TokenResponse(
 )
 
 
-//UGdOYkhGVEhVVE85UFRjbmZIUHhXUW1nQ1lrYTpkY1I3cU1veU5VS2ZmZllsS3BrNlVZSmxmM3Nh
-
-
-
 //BRIDGES
 @Serializable
 data class JourneyResponse(
@@ -109,3 +118,38 @@ data class ServiceJourney(
 data class Line(
     val name: String
 )
+
+data class HomeDATA(
+    val departure: String,
+    val vehicle: String
+)
+
+suspend fun FetchToHOME(toGid: Long, fromGid: Long):HomeDATA {
+
+
+//    val fromGid =9021014001760000
+//    val toGid =9021014007340000
+
+               return try {
+                    val token = getToken()
+
+                    val data = fetchData(token.access_token, fromGid, toGid)
+
+                    val timeofDeparture = data.results.firstOrNull()
+                        ?.tripLegs?.firstOrNull()?.estimatedDepartureTime ?: "No time found"
+
+
+                    val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+                   val date = OffsetDateTime.parse(timeofDeparture, formatter)
+
+                    val lineNumber = data.results
+                        .firstOrNull()
+                        ?.tripLegs?.firstOrNull()?.serviceJourney?.line?.name ?: "Unknown"
+
+                   HomeDATA(timeofDeparture, lineNumber)
+
+                } catch (e: Exception) {
+                    Log.d("MyApp", "Error fetching data: ${e.message}")
+                   HomeDATA(departure = "Error", vehicle = "Error")
+                }
+}
