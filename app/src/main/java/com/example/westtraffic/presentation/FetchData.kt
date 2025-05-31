@@ -107,7 +107,7 @@ data class Journey(
 @Serializable
 data class Tripleg(
     val serviceJourney: ServiceJourney,
-    val estimatedDepartureTime: String // or a proper Date type if you parse it
+    val estimatedDepartureTime: String
 )
 
 @Serializable
